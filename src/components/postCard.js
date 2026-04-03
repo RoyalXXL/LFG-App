@@ -14,14 +14,19 @@ function renderPlatformLinks(platforms) {
 }
 
 export function renderPostCard(post, { game, author, reacted, bookmarked, joined }) {
+  const safeGameName = game?.name ?? 'Unknown game';
+  const safeAuthorName = author?.displayName ?? 'Unknown player';
+  const safeAuthorAvatar = author?.avatar ?? '??';
+  const safeAuthorReputation = Number(author?.reputation ?? 0).toFixed(1);
+
   return `
     <article class="post-card ${post.neededPlayers === 0 ? 'full' : ''}">
       <header>
-        <button class="user-block button-reset" data-profile-id="${author.id}">
-          <span class="avatar">${author.avatar}</span>
+        <button class="user-block button-reset" data-profile-id="${author?.id ?? 'u001'}">
+          <span class="avatar">${safeAuthorAvatar}</span>
           <div>
-            <strong>${author.displayName}</strong>
-            <small>${game.name} • ${formatRelativeDate(post.createdAt)} • ⭐ ${author.reputation.toFixed(1)}</small>
+            <strong>${safeAuthorName}</strong>
+            <small>${safeGameName} • ${formatRelativeDate(post.createdAt)} • ⭐ ${safeAuthorReputation}</small>
           </div>
         </button>
         <span class="slot-pill ${post.neededPlayers === 0 ? 'full' : ''}">${post.neededPlayers === 0 ? 'Full squad' : `Need ${post.neededPlayers}`}</span>
@@ -46,7 +51,7 @@ export function renderPostCard(post, { game, author, reacted, bookmarked, joined
       <footer>
         <strong>Platform IDs</strong>
         <ul class="platform-list">
-          ${renderPlatformLinks(author.platforms)}
+          ${renderPlatformLinks(author?.platforms ?? {})}
         </ul>
       </footer>
     </article>
