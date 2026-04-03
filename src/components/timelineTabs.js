@@ -3,6 +3,8 @@ export function renderTimelineTabs(activeTimeline) {
     { id: 'forum', label: 'Game feed' },
     { id: 'friends', label: 'Following' },
     { id: 'trending', label: 'Trending' },
+    { id: 'saved', label: 'Saved' },
+    { id: 'mine', label: 'My posts' },
   ];
 
   return `
@@ -10,7 +12,7 @@ export function renderTimelineTabs(activeTimeline) {
       ${tabs
         .map(
           (tab) => `
-            <button class="tab ${activeTimeline === tab.id ? 'active' : ''}" data-timeline="${tab.id}">${tab.label}</button>
+            <button type="button" class="tab ${activeTimeline === tab.id ? 'active' : ''}" data-timeline="${tab.id}">${tab.label}</button>
           `,
         )
         .join('')}
