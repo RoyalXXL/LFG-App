@@ -1,8 +1,12 @@
-export function renderGameList(games, selectedGameId) {
+export function renderGameList(games, selectedGameId, searchValue) {
   return `
     <section>
-      <h2>Game forums</h2>
-      <p class="subtle">Pick a game forum and browse open squads.</p>
+      <h2>Steam game forums</h2>
+      <p class="subtle">Search popular games, then open that game feed instantly.</p>
+      <label class="search-wrap">
+        <span>Search game</span>
+        <input id="game-search" placeholder="Counter-Strike, Helldivers, Monster Hunter..." value="${searchValue}" />
+      </label>
       <div class="game-list">
         ${games
           .map(

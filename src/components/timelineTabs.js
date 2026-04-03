@@ -1,7 +1,8 @@
 export function renderTimelineTabs(activeTimeline) {
   const tabs = [
-    { id: 'forum', label: 'Forum feed' },
-    { id: 'friends', label: 'Friends feed' },
+    { id: 'forum', label: 'Game feed' },
+    { id: 'friends', label: 'Following' },
+    { id: 'trending', label: 'Trending' },
   ];
 
   return `

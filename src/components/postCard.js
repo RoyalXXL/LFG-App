@@ -13,38 +13,35 @@ function renderPlatformLinks(platforms) {
     .join('');
 }
 
-export function renderPostCard(post, { game, author }) {
+export function renderPostCard(post, { game, author, reacted }) {
   return `
     <article class="post-card">
       <header>
-        <div class="user-block">
+        <button class="user-block button-reset" data-profile-id="${author.id}">
           <span class="avatar">${author.avatar}</span>
           <div>
             <strong>${author.displayName}</strong>
             <small>${game.name} • ${formatRelativeDate(post.createdAt)}</small>
           </div>
-        </div>
-        <span class="slot-pill ${post.neededPlayers === 0 ? 'full' : ''}">Need ${post.neededPlayers}</span>
+        </button>
+        <span class="slot-pill">Need ${post.neededPlayers}</span>
       </header>
       <h3>${post.title}</h3>
       <p>${post.description}</p>
-      <ul class="meta-pills">
-        <li>${post.playstyle}</li>
-        <li>${post.micPolicy}</li>
-        <li>${post.language}</li>
-      </ul>
       <ul class="tags">
         ${post.tags.map((tag) => `<li>#${tag}</li>`).join('')}
       </ul>
+      <div class="post-actions">
+        <button class="chip-btn ${reacted ? 'active' : ''}" data-react-post="${post.id}">▲ ${post.votes}</button>
+        <button class="chip-btn">💬 ${post.comments}</button>
+        <button class="chip-btn">🔁 ${post.reposts}</button>
+        <button class="chip-btn">🎯 Join</button>
+      </div>
       <footer>
         <strong>Platform IDs</strong>
         <ul class="platform-list">
           ${renderPlatformLinks(author.platforms)}
         </ul>
-        <div class="post-actions">
-          <button class="secondary" data-join-post="${post.id}" ${post.neededPlayers === 0 ? 'disabled' : ''}>Request to join</button>
-          <button class="ghost" data-report-post="${post.id}">Report</button>
-        </div>
       </footer>
     </article>
   `;

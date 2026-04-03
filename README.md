@@ -1,35 +1,28 @@
 # LFG Hub Foundation
 
-A modular, mobile-friendly starter app for finding gaming squads (LFG).
+A modular, mobile-friendly LFG social app inspired by Reddit/Twitter interaction loops, focused on finding squads quickly.
 
-## Core features in this foundation
+## Core features
 
-- Game-specific forums (Marathon, Destiny 2, Apex examples)
-- Post composer for title, description, tags, and number of players needed
-- Structured matchmaking attributes inspired by leading LFG systems:
-  - Mic policy, playstyle, and language
-  - Search and smart filters for better discovery
-- Trust and safety basics:
-  - Reliability signal in the right rail
-  - Report button per post
-- Accessibility and HCI improvements:
-  - Compact density mode
-  - High-contrast mode
-- Platform contact handles shown on every post
-- Two feed modes:
-  - **Forum feed** (all posts for selected game)
-  - **Friends feed** (posts from people you follow/friend)
-- Responsive layout optimized for phone and desktop
+- Persistent local data layer (posts, profile edits, reactions, selected timeline)
+- Searchable Steam-popular game forum directory
+- Multi-feed timeline modes:
+  - **Game feed** (latest posts in selected game)
+  - **Following** (friend-only posts)
+  - **Trending** (engagement-ranked posts)
+- LFG post composer with game picker, tags, and slot count
+- Profile system with editable identity + contact handles
+- Engagement primitives (upvote/react, comments/repost counters, join CTA)
 
 ## Project structure
 
 ```text
 index.html
 src/
-  main.js                # App composition and event binding
-  data/                  # Static game/user/post seed data
-  state/store.js         # Shared state + actions
-  components/            # UI pieces rendered as modular functions
+  main.js                # App composition, filtering logic, event binding
+  data/                  # Seed games/users/posts
+  state/store.js         # Shared state, persistence, and actions
+  components/            # Modular UI rendering units
   styles/global.css      # Global styles and responsive behavior
   utils/date.js          # Date formatting helpers
 ```
@@ -44,10 +37,10 @@ python -m http.server 4173
 
 Then open `http://localhost:4173`.
 
-## Next suggested modules
+## Next suggested modules for release readiness
 
-- Auth module (sign in + profile editing)
-- Real API module (persist posts/users)
-- Direct messaging module
-- Notifications module (post replies, friend requests)
-- Moderator workflow module (triage and enforce reports)
+- Real auth + role-based moderation
+- API backend (PostgreSQL + Redis + queue)
+- Real-time chat + notifications
+- Trust/safety workflows (reporting, blocklists, abuse heuristics)
+- Full-text search service + ranking model
