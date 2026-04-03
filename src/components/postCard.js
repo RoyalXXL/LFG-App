@@ -24,10 +24,15 @@ export function renderPostCard(post, { game, author }) {
             <small>${game.name} • ${formatRelativeDate(post.createdAt)}</small>
           </div>
         </div>
-        <span class="slot-pill">Need ${post.neededPlayers}</span>
+        <span class="slot-pill ${post.neededPlayers === 0 ? 'full' : ''}">Need ${post.neededPlayers}</span>
       </header>
       <h3>${post.title}</h3>
       <p>${post.description}</p>
+      <ul class="meta-pills">
+        <li>${post.playstyle}</li>
+        <li>${post.micPolicy}</li>
+        <li>${post.language}</li>
+      </ul>
       <ul class="tags">
         ${post.tags.map((tag) => `<li>#${tag}</li>`).join('')}
       </ul>
@@ -36,6 +41,10 @@ export function renderPostCard(post, { game, author }) {
         <ul class="platform-list">
           ${renderPlatformLinks(author.platforms)}
         </ul>
+        <div class="post-actions">
+          <button class="secondary" data-join-post="${post.id}" ${post.neededPlayers === 0 ? 'disabled' : ''}>Request to join</button>
+          <button class="ghost" data-report-post="${post.id}">Report</button>
+        </div>
       </footer>
     </article>
   `;

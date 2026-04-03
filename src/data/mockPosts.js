@@ -8,6 +8,9 @@ export const initialPosts = [
       'Chill but focused run, mic preferred. Looking for two players that know map routes.',
     tags: ['chill', 'pve', 'mic-on'],
     neededPlayers: 2,
+    micPolicy: 'Mic preferred',
+    playstyle: 'Chill',
+    language: 'English',
     createdAt: '2026-04-02T20:41:00Z',
   },
   {
@@ -18,6 +21,9 @@ export const initialPosts = [
     description: 'Need one support main for ranked sessions tonight.',
     tags: ['ranked', 'late-night'],
     neededPlayers: 1,
+    micPolicy: 'Mic required',
+    playstyle: 'Competitive',
+    language: 'English',
     createdAt: '2026-04-03T00:22:00Z',
   },
   {
@@ -28,6 +34,9 @@ export const initialPosts = [
     description: 'New lights welcome. We explain each encounter and roles.',
     tags: ['teaching', 'raid', 'friendly'],
     neededPlayers: 3,
+    micPolicy: 'Mic preferred',
+    playstyle: 'Teaching',
+    language: 'English',
     createdAt: '2026-04-01T18:00:00Z',
   },
 ];

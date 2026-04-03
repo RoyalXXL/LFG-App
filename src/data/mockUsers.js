@@ -3,6 +3,8 @@ export const currentUser = {
   displayName: 'KaiPilot',
   avatar: 'KP',
   friends: ['u002', 'u003'],
+  trustScore: 94,
+  endorsements: 18,
   platforms: {
     steam: 'KaiPilot#4412',
     xbox: 'KaiPilot',
@@ -16,6 +18,8 @@ export const users = [
     id: 'u002',
     displayName: 'NovaHex',
     avatar: 'NH',
+    trustScore: 90,
+    endorsements: 26,
     platforms: {
       steam: 'NovaHex',
       xbox: 'NovaHexX',
@@ -26,6 +30,8 @@ export const users = [
     id: 'u003',
     displayName: 'CipherWisp',
     avatar: 'CW',
+    trustScore: 96,
+    endorsements: 41,
     platforms: {
       steam: 'CipherWisp',
       xbox: 'CipherWisp77',
@@ -36,6 +42,8 @@ export const users = [
     id: 'u004',
     displayName: 'RookSignal',
     avatar: 'RS',
+    trustScore: 88,
+    endorsements: 12,
     platforms: {
       steam: 'RookSignal',
       xbox: 'RookSignal',

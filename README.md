@@ -6,7 +6,16 @@ A modular, mobile-friendly starter app for finding gaming squads (LFG).
 
 - Game-specific forums (Marathon, Destiny 2, Apex examples)
 - Post composer for title, description, tags, and number of players needed
-- Platform contact handles shown on every post (Steam / Xbox / PlayStation)
+- Structured matchmaking attributes inspired by leading LFG systems:
+  - Mic policy, playstyle, and language
+  - Search and smart filters for better discovery
+- Trust and safety basics:
+  - Reliability signal in the right rail
+  - Report button per post
+- Accessibility and HCI improvements:
+  - Compact density mode
+  - High-contrast mode
+- Platform contact handles shown on every post
 - Two feed modes:
   - **Forum feed** (all posts for selected game)
   - **Friends feed** (posts from people you follow/friend)
@@ -19,7 +28,7 @@ index.html
 src/
   main.js                # App composition and event binding
   data/                  # Static game/user/post seed data
-  state/store.js         # Shared state + actions (setGame, setTimeline, createPost)
+  state/store.js         # Shared state + actions
   components/            # UI pieces rendered as modular functions
   styles/global.css      # Global styles and responsive behavior
   utils/date.js          # Date formatting helpers
@@ -41,4 +50,4 @@ Then open `http://localhost:4173`.
 - Real API module (persist posts/users)
 - Direct messaging module
 - Notifications module (post replies, friend requests)
-- Search/filter module (tags, mic/no mic, platform)
+- Moderator workflow module (triage and enforce reports)

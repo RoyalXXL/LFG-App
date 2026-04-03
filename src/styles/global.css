@@ -77,24 +77,33 @@ small {
 }
 
 .composer,
-.tabs {
+.tabs,
+.filters {
   margin-bottom: 1rem;
 }
 
-#post-form {
+#post-form,
+.filters {
   display: grid;
   gap: 0.7rem;
 }
 
-.form-row {
+.form-row,
+.filter-grid {
   display: grid;
   gap: 0.7rem;
   grid-template-columns: 130px 1fr;
 }
 
+.form-row.three-up,
+.filter-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 input,
 textarea,
-button {
+button,
+select {
   width: 100%;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -106,6 +115,14 @@ button {
 
 button {
   cursor: pointer;
+}
+
+.secondary {
+  background: var(--soft-panel);
+}
+
+.ghost {
+  background: transparent;
 }
 
 .tabs {
@@ -156,8 +173,13 @@ button {
   font-size: 0.8rem;
 }
 
+.slot-pill.full {
+  opacity: 0.6;
+}
+
 .tags,
-.platform-list {
+.platform-list,
+.meta-pills {
   list-style: none;
   margin: 0.6rem 0;
   padding: 0;
@@ -179,6 +201,39 @@ button {
   gap: 0.35rem;
 }
 
+.post-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.check input {
+  width: auto;
+  margin: 0;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trust-card {
+  display: grid;
+  gap: 0.2rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.65rem;
+  margin-bottom: 0.7rem;
+  background: color-mix(in srgb, var(--soft-panel), transparent 5%);
+}
+
 a {
   color: var(--accent);
   text-decoration: none;
@@ -189,6 +244,24 @@ a {
   border-radius: 12px;
   padding: 1rem;
   color: var(--muted);
+}
+
+body.compact .post-card {
+  padding: 0.65rem;
+}
+
+body.compact .panel {
+  padding: 0.75rem;
+}
+
+body.hc {
+  --bg: #050608;
+  --panel: #0d1117;
+  --soft-panel: #141a23;
+  --text: #ffffff;
+  --muted: #d0d7e2;
+  --accent: #79b8ff;
+  --border: #5e708f;
 }
 
 @media (max-width: 1080px) {
@@ -215,11 +288,18 @@ a {
     border-radius: 12px;
   }
 
-  .form-row {
+  .form-row,
+  .form-row.three-up,
+  .filter-grid {
     grid-template-columns: 1fr;
   }
 
   .tabs {
     overflow-x: auto;
+  }
+
+  .toggle-row,
+  .post-actions {
+    flex-direction: column;
   }
 }
