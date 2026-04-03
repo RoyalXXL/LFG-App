@@ -1,4 +1,4 @@
-export const games = [
+﻿export const games = [
   { id: 'counter-strike-2', name: 'Counter-Strike 2', genres: ['FPS', 'Competitive'] },
   { id: 'dota-2', name: 'Dota 2', genres: ['MOBA', 'Team Strategy'] },
   { id: 'pubg-battlegrounds', name: 'PUBG: BATTLEGROUNDS', genres: ['Battle Royale', 'Shooter'] },
@@ -77,3 +77,4 @@ export const games = [
   { id: 'football-manager-2026', name: 'Football Manager 2026', genres: ['Sports Sim', 'Online'] },
   { id: 'arknights-endfield', name: 'Arknights: Endfield', genres: ['RPG', 'Co-op'] },
 ];
+

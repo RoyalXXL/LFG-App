@@ -7,7 +7,34 @@
     <link rel="stylesheet" href="./src/styles/global.css" />
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="./src/main.js"></script>
+    <div id="app">
+      <section class="panel">
+        <h2>Loading LFG Hub…</h2>
+        <p class="subtle">If this stays on screen, a JavaScript module failed to load.</p>
+      </section>
+    </div>
+    <noscript>
+      <section class="panel">
+        <h2>JavaScript is required</h2>
+        <p class="subtle">Enable JavaScript to use LFG Hub.</p>
+      </section>
+    </noscript>
+    <script type="module">
+      const app = document.querySelector('#app');
+
+      import('./src/main.js').catch((error) => {
+        if (!app) {
+          return;
+        }
+
+        app.innerHTML = `
+          <section class="panel">
+            <h2>Startup failed</h2>
+            <p class="subtle">Main module could not load. Open DevTools console for details.</p>
+            <pre>${String((error && error.stack) || (error && error.message) || error)}</pre>
+          </section>
+        `;
+      });
+    </script>
   </body>
 </html>
