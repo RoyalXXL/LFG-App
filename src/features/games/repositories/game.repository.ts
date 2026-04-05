@@ -1,25 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/shared/lib/prisma';
 
-export class PrismaGameRepository {
-  private prisma = new PrismaClient();
+export interface IGameRepository {
+  search(query: string): Promise<unknown[]>;
+  trending(): Promise<unknown[]>;
+}
 
-  async search(query: string) {
-    return this.prisma.game.findMany({
+export class PrismaGameRepository implements IGameRepository {
+  search(query: string) {
+    return prisma.game.findMany({
       where: {
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { aliases: { some: { alias: { contains: query, mode: 'insensitive' } } } },
-        ],
+        OR: [{ name: { contains: query, mode: 'insensitive' } }, { aliases: { some: { alias: { contains: query, mode: 'insensitive' } } } }],
       },
-      include: { aliases: true },
+      include: { hub: true },
+      take: 12,
     });
   }
 
-  async trending() {
-    return this.prisma.game.findMany({
-      orderBy: { activePlayers7d: 'desc' },
-      take: 10,
-      include: { aliases: true },
-    });
+  trending() {
+    return prisma.game.findMany({ orderBy: { activePlayers7d: 'desc' }, take: 8, include: { hub: true } });
   }
 }

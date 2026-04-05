@@ -1,13 +1,15 @@
-import { PrismaPostRepository } from '../repositories/post.repository';
+import { createPostSchema, CreatePostInput } from '@/features/posts/schemas/post.schema';
+import { IPostRepository } from '@/features/posts/repositories/post.repository';
 
 export class PostService {
-  constructor(private repo: PrismaPostRepository) {}
+  constructor(private readonly repo: IPostRepository) {}
 
-  listByGame(gameSlug: string) {
-    return this.repo.listByGame(gameSlug);
+  async create(authorId: string, input: CreatePostInput) {
+    const parsed = createPostSchema.parse(input);
+    return this.repo.create(authorId, parsed);
   }
 
-  create(userId: string, data: any) {
-    return this.repo.create(userId, data);
+  async listByGame(gameSlug: string) {
+    return this.repo.listByGame(gameSlug);
   }
 }

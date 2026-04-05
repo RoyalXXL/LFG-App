@@ -1,29 +1,26 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/shared/lib/prisma';
+import { CreatePostInput } from '@/features/posts/schemas/post.schema';
 
-export class PrismaPostRepository {
-  private prisma = new PrismaClient();
+export interface IPostRepository {
+  create(authorId: string, input: CreatePostInput): Promise<{ id: string }>;
+  listByGame(gameSlug: string): Promise<unknown[]>;
+}
 
-  async listByGame(gameSlug: string) {
-    return this.prisma.lFGPost.findMany({
-      where: {
-        game: { slug: gameSlug },
-      },
-      include: {
-        game: true,
-        author: { select: { id: true, username: true } },
-        tags: true,
-        _count: { select: { comments: true, votes: true } },
-      },
-      orderBy: { createdAt: 'desc' },
+export class PrismaPostRepository implements IPostRepository {
+  async create(authorId: string, input: CreatePostInput) {
+    const created = await prisma.lFGPost.create({
+      data: { ...input, authorId, timezone: 'UTC', postType: input.postType, joinMode: input.joinMode },
+      select: { id: true },
     });
+    return created;
   }
 
-  async create(userId: string, data: any) {
-    return this.prisma.lFGPost.create({
-      data: {
-        ...data,
-        authorId: userId,
-      },
+  async listByGame(gameSlug: string) {
+    return prisma.lFGPost.findMany({
+      where: { game: { slug: gameSlug } },
+      include: { author: true, game: true, tags: true },
+      orderBy: { createdAt: 'desc' },
+      take: 30,
     });
   }
 }

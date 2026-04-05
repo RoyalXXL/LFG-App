@@ -1,7 +1,7 @@
-import { PrismaGameRepository } from '../repositories/game.repository';
+import { IGameRepository } from '@/features/games/repositories/game.repository';
 
 export class GameService {
-  constructor(private repo: PrismaGameRepository) {}
+  constructor(private readonly repo: IGameRepository) {}
 
   search(query: string) {
     return this.repo.search(query);

@@ -282,7 +282,6 @@ model Comment {
   parent    Comment? @relation("CommentThread", fields: [parentId], references: [id])
   replies   Comment[] @relation("CommentThread")
   reports   Report[]
-  votes     Vote[]
 }
 
 model Vote {
