@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+src/components/**
+src/data/**
+src/state/**
+src/styles/**
+src/utils/**
+src/main.js
+index.html
+Start.txt

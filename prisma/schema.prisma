@@ -1,0 +1,454 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostType {
+  casual
+  ranked
+  raid
+  dungeon
+  teaching
+  trade
+  clan
+  tournament
+  other
+}
+
+enum PostStatus {
+  open
+  nearly_full
+  full
+  closed
+  expired
+  cancelled
+}
+
+enum JoinMode {
+  instant_join
+  request_approval
+  invite_only
+}
+
+enum ModerationState {
+  visible
+  under_review
+  hidden
+  removed
+}
+
+enum VoteType {
+  upvote
+  downvote
+}
+
+enum JoinRequestStatus {
+  pending
+  approved
+  rejected
+  follow_up
+  withdrawn
+}
+
+enum NotificationType {
+  join_approved
+  join_rejected
+  new_message
+  comment_reply
+  post_expiring
+  followed_game_activity
+  moderation
+}
+
+enum ReportTargetType {
+  post
+  comment
+  user
+}
+
+enum ReportStatus {
+  open
+  triaged
+  actioned
+  dismissed
+}
+
+enum ModerationActionType {
+  warn
+  mute
+  suspend
+  remove_content
+  lock_post
+  ban
+}
+
+model User {
+  id               String               @id @default(cuid())
+  email            String?              @unique
+  username         String               @unique
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  profile          Profile?
+  posts            LFGPost[]
+  comments         Comment[]
+  votes            Vote[]
+  joinRequests     JoinRequest[]
+  partyMemberships PartyMember[]
+  dmThreadsA       DirectMessageThread[] @relation("ThreadUserA")
+  dmThreadsB       DirectMessageThread[] @relation("ThreadUserB")
+  messages         DirectMessage[]
+  notifications    Notification[]
+  reportsFiled     Report[]             @relation("Reporter")
+  reportsAgainst   Report[]             @relation("ReportedUser")
+  moderationActions ModerationAction[]  @relation("Moderator")
+  reputationEvents ReputationEvent[]
+  availability     AvailabilityWindow[]
+  blockedUsers     BlockedUser[]        @relation("Blocker")
+  blockedBy        BlockedUser[]        @relation("Blocked")
+  savedPosts       SavedPost[]
+  recentSearches   RecentSearch[]
+  deviceSessions   DeviceSession[]
+  auditLogs        AuditLog[]
+  followedGames    FollowedGame[]
+}
+
+model Profile {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  bio                  String?
+  timezone             String?
+  languages            String[]
+  playstyles           String[]
+  preferredRoles       String[]
+  discordUsername      String?
+  xboxUsername         String?
+  psnUsername          String?
+  steamUsername        String?
+  battlenetUsername    String?
+  successfulGroups     Int      @default(0)
+  noShowReports        Int      @default(0)
+  helpfulVotes         Int      @default(0)
+  teachingEndorsements Int      @default(0)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  name            String      @unique
+  coverUrl        String?
+  description     String?
+  activePlayers7d Int         @default(0)
+  aliases         GameAlias[]
+  supportedPlatforms GamePlatform[]
+  hub             GameHub?
+  posts           LFGPost[]
+  followers       FollowedGame[]
+}
+
+model GameAlias {
+  id      String @id @default(cuid())
+  gameId  String
+  alias   String
+  game    Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, alias])
+}
+
+model Platform {
+  id       String @id @default(cuid())
+  key      String @unique
+  label    String
+  games    GamePlatform[]
+  postLinks LFGPostPlatform[]
+}
+
+model GamePlatform {
+  id         String   @id @default(cuid())
+  gameId     String
+  platformId String
+  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, platformId])
+}
+
+model GameHub {
+  id            String   @id @default(cuid())
+  gameId        String   @unique
+  rulesMarkdown String?
+  isVerified    Boolean  @default(false)
+  game          Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model FollowedGame {
+  id        String   @id @default(cuid())
+  userId    String
+  gameId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameId])
+}
+
+model LFGPost {
+  id                    String            @id @default(cuid())
+  title                 String
+  body                  String
+  gameId                String
+  authorId              String
+  postType              PostType
+  sessionStartTime      DateTime?
+  estimatedDurationMin  Int?
+  timezone              String
+  crossplay             Boolean           @default(false)
+  voiceChatRequired     Boolean           @default(false)
+  micRequired           Boolean           @default(false)
+  languages             String[]
+  skillLevelMin         String?
+  skillLevelMax         String?
+  ageRequirementMin     Int?
+  region                String?
+  partySizeNeeded       Int
+  currentPartySize      Int
+  status                PostStatus        @default(open)
+  joinMode              JoinMode          @default(request_approval)
+  recurring             Boolean           @default(false)
+  recurringSchedule     String?
+  score                 Int               @default(0)
+  commentCount          Int               @default(0)
+  viewCount             Int               @default(0)
+  saveCount             Int               @default(0)
+  expiresAt             DateTime?
+  moderationState       ModerationState   @default(visible)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  game                  Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  author                User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  requirements          LFGPostRequirement[]
+  tags                  LFGPostTag[]
+  comments              Comment[]
+  votes                 Vote[]
+  joinRequests          JoinRequest[]
+  partyMembers          PartyMember[]
+  reports               Report[]
+  savedBy               SavedPost[]
+  platformLinks         LFGPostPlatform[]
+}
+
+model LFGPostRequirement {
+  id      String @id @default(cuid())
+  postId  String
+  key     String
+  value   String
+  post    LFGPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model LFGPostTag {
+  id      String @id @default(cuid())
+  postId  String
+  tag     String
+  post    LFGPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([tag])
+}
+
+model LFGPostPlatform {
+  id         String   @id @default(cuid())
+  postId     String
+  platformId String
+  post       LFGPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, platformId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  authorId  String
+  parentId  String?
+  body      String
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      LFGPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    Comment? @relation("CommentThread", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentThread")
+  reports   Report[]
+  votes     Vote[]
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  commentId String?
+  type      VoteType
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      LFGPost? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+model JoinRequest {
+  id          String            @id @default(cuid())
+  postId      String
+  requesterId String
+  message     String?
+  status      JoinRequestStatus @default(pending)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  post        LFGPost           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  requester   User              @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+}
+
+model PartyMember {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  role      String?
+  joinedAt  DateTime @default(now())
+  post      LFGPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DirectMessageThread {
+  id        String   @id @default(cuid())
+  userAId   String
+  userBId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userA     User     @relation("ThreadUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB     User     @relation("ThreadUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  messages  DirectMessage[]
+
+  @@unique([userAId, userBId])
+}
+
+model DirectMessage {
+  id        String   @id @default(cuid())
+  threadId  String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  thread    DirectMessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id             String          @id @default(cuid())
+  reporterId     String
+  reportedUserId String?
+  postId         String?
+  commentId      String?
+  targetType     ReportTargetType
+  reason         String
+  status         ReportStatus     @default(open)
+  createdAt      DateTime         @default(now())
+  reporter       User             @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser   User?            @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  post           LFGPost?         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment        Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  moderationActions ModerationAction[]
+}
+
+model ModerationAction {
+  id          String               @id @default(cuid())
+  moderatorId String
+  reportId    String?
+  actionType  ModerationActionType
+  note        String?
+  createdAt   DateTime             @default(now())
+  moderator   User                 @relation("Moderator", fields: [moderatorId], references: [id], onDelete: Cascade)
+  report      Report?              @relation(fields: [reportId], references: [id], onDelete: SetNull)
+}
+
+model ReputationEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  signal    String
+  delta     Int
+  sourceId  String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AvailabilityWindow {
+  id          String   @id @default(cuid())
+  userId      String
+  dayOfWeek   Int
+  startMinute Int
+  endMinute   Int
+  timezone    String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BlockedUser {
+  id         String   @id @default(cuid())
+  blockerId  String
+  blockedId  String
+  reason     String?
+  createdAt  DateTime @default(now())
+  blocker    User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked    User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model SavedPost {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      LFGPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model RecentSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  query     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DeviceSession {
+  id            String   @id @default(cuid())
+  userId        String
+  userAgent     String
+  ipHash        String?
+  lastActiveAt  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
